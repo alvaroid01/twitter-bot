@@ -1,3 +1,5 @@
+//twitter-bot-v2 npm library credentials
+
 const {TwitterApi} = require('twitter-api-v2')
 
 const client = new TwitterApi({
