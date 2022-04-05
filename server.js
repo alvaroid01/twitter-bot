@@ -1,17 +1,31 @@
+require('dotenv').config()
 //initizlize bot
 const express = require('express')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-console.log('💫💫💫The bot is starting!💫💫💫');
+  console.log('💫💫💫The bot is starting!💫💫💫');
 
 var Twit = require('twit');
 
 const rwClient = require('./twitterClientV2.js');
 var T = new Twit(require('./twitterClient'));
 
-const userID = '1405501005538775043'
-const blockNumber = 10
+const userID = process.env.TWITTER_API_USER_ID
+const blockNumber = 50
+
+var cron = require('node-cron');
+
+cron.schedule('*/15 * * * *', () => {
+  console.log('running a task every 15 minutes');
+  findUsers(blockNumber)
+    getUserBlocked()
+});
+
+setTimeout(() => {
+    console.log('aldfrg')
+}, 1000);
 const searchIndividualUser =  (username) =>{
  
     rwClient.v1.searchUsers(username).then((res)=>{
@@ -24,7 +38,10 @@ const searchIndividualUser =  (username) =>{
             
              rwClient.v2.block(userID, userBlock).then((data)=>{
              console.log('🚫🚫🚫 Blocked user ' + res._realData[0].name + ' with ID: ' + userBlock + ' 🚫🚫🚫')
-             return data  
+             
+             
+             
+             return {data } 
                  
              }
           
@@ -44,10 +61,26 @@ const findUsers = async(numb) =>{
         } 
        
     })  
-    
-
+      
 }
-console.log('🎉🎉🎉 You have blocked ' + blockNumber + ' cryptobros!🎉🎉🎉 ')
-findUsers(blockNumber)
+const blokedId = async() =>{
+    await T.get('blocks/ids',function(err, data, response) {
+        let size = data.ids.length
+        return size}
+      
+    )
+}
 
 
+const getUserBlocked = async() =>{
+await T.get('blocks/ids',function(err, data, response) {
+    
+    let size = data.ids.length
+    return console.log('🎉🎉🎉 You have blocked ' + size + ' cryptobros!🎉🎉🎉 ')
+
+    })
+}
+
+
+  
+  
